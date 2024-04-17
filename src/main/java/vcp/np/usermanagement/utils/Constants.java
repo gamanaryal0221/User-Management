@@ -99,6 +99,8 @@ public class Constants {
 
 		public static String CLIENT_ID = "clientId";
 		public static String CLIENT_DISPLAY_NAME = "clientDisplayName";
+		public static String IS_ADMIN_CLIENT = "isAdminClient";
+		
 	}
 	
 	
@@ -106,7 +108,6 @@ public class Constants {
 	
 	public static String MODEL_AND_VIEW = "modelAndView";
 	
-	public static String ADMIN_CLIENT_ID = "adminClient.id";
 	public static String CLIENT_ID = "clientId";
 	public static String CLIENT_DISPLAY_NAME = "clientDisplayName";
 

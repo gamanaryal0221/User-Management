@@ -87,14 +87,24 @@ public class CasService {
 
         System.out.println("Saving data on session");
         HttpSession session = request.getSession(true);
+        
         session.getServletContext().setAttribute(Constants.Session.USER_ID, String.valueOf(claims.getSubject()));
         session.getServletContext().setAttribute(Constants.Session.USERNAME, claims.get(Constants.Session.USERNAME));
         session.getServletContext().setAttribute(Constants.Session.MAIL_ADDRESS, claims.get(Constants.Session.MAIL_ADDRESS));
         session.getServletContext().setAttribute(Constants.Session.FIRST_NAME, claims.get(Constants.Session.FIRST_NAME));
         session.getServletContext().setAttribute(Constants.Session.MIDDLE_NAME, claims.get(Constants.Session.MIDDLE_NAME));
         session.getServletContext().setAttribute(Constants.Session.LAST_NAME, claims.get(Constants.Session.LAST_NAME));
+
         session.getServletContext().setAttribute(Constants.Session.CLIENT_ID, String.valueOf(claims.get(Constants.Session.CLIENT_ID)));
         session.getServletContext().setAttribute(Constants.Session.CLIENT_DISPLAY_NAME, claims.get(Constants.Session.CLIENT_DISPLAY_NAME));
+
+        String adminClientId = profile.getProperty("adminClient.id");
+        if (adminClientId == null || adminClientId.isEmpty()) {
+            throw new Exception("Missing admin client id in config");
+        }
+        boolean isAdminClient = Helper.isAdminClient(session, adminClientId);
+        System.out.println(claims.get(Constants.Session.USERNAME) + " logged in to admin client?\n >> " + isAdminClient);
+        session.getServletContext().setAttribute(Constants.Session.IS_ADMIN_CLIENT, isAdminClient);
         
         return null;
     }
