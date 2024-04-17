@@ -1,0 +1,33 @@
+<div th:fragment="userSidebar">
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="/user/list">List of Users</a></li>
+            <li><a href="/user/add">Add User</a></li>
+            <li>Menu Item 3</li>
+            <li>Menu Item 4</li>
+            <li>Menu Item 5</li>
+        </ul>
+    </div>
+
+    <div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("sidebar is ready");
+        });
+    </script>
+
+<script>
+    function toggleSidebar() {
+        var sidebar = document.getElementById("sidebar");
+        var mainContent = document.getElementsByClassName("mainContent")[0];
+        if (sidebar.style.left === "0px" || sidebar.style.left === "") {
+            sidebar.style.left = "-220px";
+            mainContent.style.marginLeft = "70px";
+        } else {
+            sidebar.style.left = "0";
+            mainContent.style.marginLeft = "290px";
+        }
+    }
+</script>
+</div>

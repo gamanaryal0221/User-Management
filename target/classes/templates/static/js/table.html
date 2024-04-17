@@ -1,0 +1,39 @@
+<div th:fragment="js">
+    <script>
+
+        // Function to handle pagination
+        function populatePagination(activePageNumber, totalPages, visiblePages = 10) {
+            totalPages = totalPages - 1;
+            var pagination = $('#pagination');
+            pagination.empty();
+
+            var startPage = Math.max(0, activePageNumber - Math.floor(visiblePages / 2));
+            var endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+            if (activePageNumber > 0) {
+                pagination.append('<a href="#" data-page="0">&laquo;</a>'); // Adding first link
+                pagination.append('<a href="#" data-page="' + (activePageNumber - 1) + '">&lsaquo;</a>'); // Adding previous link
+            }
+
+            for (var i = startPage; i <= endPage; i++) {
+                var pageLink = (activePageNumber === i)
+                    ? '<a id="activePageNumber" style="background-color: #007BFF; color: #fff;" href="#" data-page="' + i + '">' + (i + 1) + '</a>'
+                    : '<a href="#" data-page="' + i + '">' + (i + 1) + '</a>';
+
+                pagination.append(pageLink);
+            }
+
+            if (activePageNumber < totalPages) {
+                pagination.append('<a href="#" data-page="' + (activePageNumber + 1) + '">&rsaquo;</a>'); // Adding next link
+                pagination.append('<a href="#" data-page="' + totalPages + '">&raquo;</a>'); // Adding last link
+            }
+        }
+
+        // Function to show the total number of records for the specific query
+        function populateTotalRecords(innerHTML) {
+            var doc = document.getElementById("totalRecords");
+            doc.innerHTML = innerHTML;
+        }
+
+    </script>
+</div>

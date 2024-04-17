@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${userFullName}">Profile</title>
+
+    <div th:insert="~{static/css/sidebar.html :: css}"></div>
+    <div th:insert="~{static/css/bootstrap.min.html :: css}"></div>
+    <div th:insert="~{static/css/table.style.html :: css}"></div>
+    <div th:insert="~{static/css/style.html :: css}"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <div th:insert="~{static/js/table.html :: js}"></div>
+
+    <style>
+        .userProfilecontainer {
+            position: relative;
+            width: 100%;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 4px 6px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style: symbols("-");
+            /* padding: 0; */
+            margin: 0;
+        }
+
+        ul li a {
+            text-decoration: none;
+            /* color: inherit; */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Include sidebar -->
+    <div th:insert="~{user/sidebar.html :: userSidebar}"></div>
+
+    <div class="mainContent">
+        <h1 style="margin: 0px;">Profile</h1>
+
+        <input id="userId" th:value="${user.id}" style="display: none;" type="hidden"></input>
+
+        <div class="horizontal-line">
+            <span class="navigation"><a href="/user">List of Users</a></span>
+            <span class="navigation">&gt;</span>
+            <span th:text="${userFullName}"></span>
+        </div>
+
+        <div class="userProfilecontainer">
+            <h3 th:text="${userFullName}">Profile</h3>
+            <p><b>Username:</b> <span id="username" th:text="${user.username}"></span></p>
+
+            <div>
+                <ul>
+                    <li>
+                        <div class="horizontal-line">
+                            <span>Created at&nbsp;</span>
+                            <span th:text="${userCreatedAt}"></span>
+                            <div th:if="${userCreatedBy}">
+                                <span>&nbsp;by</span>
+                                <span><a th:href="@{/user/profile/{id}(id=${userCreatedBy.id})}" th:text="${userCreatedBy.fullname}"></a></span>
+                            </div>
+                        </div>
+                    </li>
+    
+                    <li>
+                        <div class="horizontal-line">
+                            <span>Last updated at&nbsp;</span>
+                            <span th:text="${userLastUpdatedAt}"></span>
+                            <div th:if="${userLastUpdatedBy}">
+                                <span>&nbsp;by</span>
+                                <span><a th:href="@{/user/profile/{id}(id=${userLastUpdatedBy.id})}" th:text="${userLastUpdatedBy.fullname}"></a></span>
+                            </div>
+                        </div>
+                    </li>
+    
+                    <li th:if="${user.employer}">
+                        <div class="horizontal-line">
+                            <span>Employer:&nbsp;</span>
+                            <a th:href="@{/user/profile/{id}(id=${user.employer.id})}" th:text="${user.employer.displayName}"></a>
+                        </div>
+                    </li>
+                    
+                    <li th:if="${createdFromClient}">
+                        <div class="horizontal-line">
+                            <span>Created From Client:&nbsp;</span>
+                            <a th:href="@{/user/profile/{id}(id=${createdFromClient.id})}" th:text="${createdFromClient.displayName}"></a>
+                        </div>
+                    </li>
+                </ul>    
+            </div>
+            
+            <button id="addProductAccessBtn" class="primary-round-btn" data-toggle="modal" data-target="#exampleModal">Add Product Access</button>
+        </div>
+
+        <div>
+            <form id="userAccessSearchForm">
+                <div id="tableDataControlSection">
+                    <p id="totalRecords"></p>
+
+                    <select id="sortBy" name="sortBy">
+                        <option value="createdAt">Access Provided Date (ASC)</option>
+                        <option value="createdAt-desc" selected>Access Provided Date (DESC)</option>
+                        <option value="lastLoggedInAt">Last Loggedin Date (ASC)</option>
+                        <option value="lastLoggedInAt-desc">Last Loggedin Date (DESC)</option>
+                        <option value="clientService.client.displayName">Client (ASC)</option>
+                        <option value="clientService.client.displayName-desc">Client (DESC)</option>
+                        <option value="clientService.service.displayName">Product (ASC)</option>
+                        <option value="clientService.service.displayName-desc">Product (DESC)</option>
+                    </select>
+
+                    <select id="pageSize" name="pageSize">
+                        <option value="10" selected>Show 10 records</option>
+                        <option value="20">Show 20 records</option>
+                        <option value="50">Show 50 records</option>
+                        <option value="100">Show 100 records</option>
+                    </select>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Access Provided Date</th>
+                            <th>Client</th>
+                            <th>Service</th>
+                            <th>Role</th>
+                            <th>Last Loggedin Date</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><input type="text" id="client" name="client"></th>
+                            <th><input type="text" id="service" name="service"></th>
+                            <th><input type="text" id="role" name="role"></th>
+                            <th></th>
+                            <th></th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="userAccessTableBody">
+                        <!-- Data rows will be dynamically populated here -->
+                    </tbody>
+                </table>
+
+                <div id="pagination" class="pagination">
+                    <!-- Pagination links will be dynamically populated here -->
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div th:insert="~{user/addProductAccess.html :: addProductAccessModal}"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function fetchData(pageNumber, pageSize) {
+                const data = {
+                    pageNumber: pageNumber,
+                    pageSize: pageSize,
+                    sortBy: $('#sortBy').val(),
+                    client: $('#client').val(),
+                    service: $('#service').val(),
+                    role: $('#role').val(),
+                }
+
+                $.ajax({
+                    url: '/api/user/profile/access/' + $('#userId').val(),
+                    method: 'POST',
+                    data: data,
+                    success: function (response) {
+                        if (response.message) {
+                            $('#userAccessTableBody').empty();
+                            alert(response.message);
+                        } else {
+                            populateTable(response.content);
+                            populatePagination(response.pageNumber, response.totalPages);
+
+                            if (response.content.length == 0) {
+                                populateTotalRecords('<b style="color:#db0303">No Product Access available</b>');
+                            } else {
+                                populateTotalRecords("Total Access: " + response.totalRecords);
+                            }
+
+                        }
+                    },
+                    error: function (error) {
+                        $('#userAccessTableBody').empty();
+                        console.error('Error fetching data:', error);
+                        alert("Could not fetch product access. Please refresh the page.");
+                        window.location.reload();
+                    }
+                });
+            }
+
+            fetchData(null, $('#pageSize').val());
+
+            $('#client, #service, #role').on('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    fetchData(null, $('#pageSize').val());
+                }
+            });
+
+            $('#pageSize').on('change', function (e) {
+                e.preventDefault();
+                fetchData(null, $(this).val());
+            });
+
+            $('#sortBy').on('change', function (e) {
+                e.preventDefault();
+                fetchData($("#activePageNumber").data('page'), $(pageSize).val());
+            });
+
+            $('#pagination').on('click', 'a', function (e) {
+                e.preventDefault();
+                fetchData($(this).data('page'), $('#pageSize').val());
+            });
+
+            $('#addProductAccessBtn').on('click', function (e) {
+                $('#exampleModal').modal('show');
+            });
+        });
+
+        function populateTable(data) {
+            var tableBody = $('#userAccessTableBody');
+            tableBody.empty()
+
+            $.each(data, function (index, userAccess) {
+                var row = '<tr>' +
+                    '<td>' + userAccess.accessProvidedDate + '</td>' +
+                    '<td><a style="color:#333;" href="/client/' + userAccess.clientId + '"><u>' + userAccess.clientDisplayName + '</u></a></td>' +
+                    '<td><a style="color:#333;" href="/service/' + userAccess.serviceId + '"><u>' + userAccess.serviceDisplayName + '</u></a></td>' +
+                    '<td></td>' +
+                    '<td>' + userAccess.lastLoggedInDate + '</td>' +
+                    '<td></td>' +
+                    '</tr>';
+                tableBody.append(row);
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

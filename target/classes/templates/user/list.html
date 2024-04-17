@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>List of Users</title>
+
+    <div th:insert="~{static/css/sidebar.html :: css}"></div>
+    <div th:insert="~{static/css/bootstrap.min.html :: css}"></div>
+    <div th:insert="~{static/css/table.style.html :: css}"></div>
+    <div th:insert="~{static/css/style.html :: css}"></div>
+
+</head>
+
+<body>
+
+    <!-- Include sidebar -->
+    <div th:insert="~{user/sidebar.html :: userSidebar}"></div>
+
+    <div class="mainContent">
+        <h1 style="margin: 0px;">List of Users</h1>
+
+        <div>
+            <form id="userListSearchForm" action="/user" method="post">
+                <div id="tableDataControlSection">
+                    <p id="totalRecords"></p>
+
+                    <select id="sortBy" name="sortBy">
+                        <option value="id" selected>User ID (ASC)</option>
+                        <option value="id-desc">User ID (DESC)</option>
+                        <option value="username">Username (ASC)</option>
+                        <option value="Username-desc">Username (DESC)</option>
+                        <option value="mailAddress">Mail Address (ASC)</option>
+                        <option value="mailAddress-desc">Mail Address (DESC)</option>
+                    </select>
+
+                    <select id="pageSize" name="pageSize">
+                        <option value="10">Show 10 records</option>
+                        <option value="20" selected>Show 20 records</option>
+                        <option value="50">Show 50 records</option>
+                        <option value="100">Show 100 records</option>
+                    </select>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Mail Address</th>
+                            <th>Fullname</th>
+                            <th>Clients</th>
+                            <th>Services</th>
+                        </tr>
+                        <tr>
+                            <th><input type="text" id="id" name="id"></th>
+                            <th><input type="text" id="username" name="username"></th>
+                            <th><input type="text" id="mailAddress" name="mailAddress"></th>
+                            <th><input type="text" id="fullname" name="fullname"></th>
+                            <th></th>
+                            <th></th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="userListTableBody">
+                        <!-- Data rows will be dynamically populated here -->
+                    </tbody>
+                </table>
+
+                <div id="pagination" class="pagination">
+                    <!-- Pagination links will be dynamically populated here -->
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function fetchData(pageNumber, pageSize) {
+                const data = {
+                    pageNumber: pageNumber,
+                    pageSize: pageSize,
+                    sortBy: $('#sortBy').val(),
+                    id: $('#id').val(),
+                    username: $('#username').val(),
+                    mailAddress: $('#mailAddress').val(),
+                    fullname: $('#fullname').val(),
+                }
+
+                $.ajax({
+                    url: '/api/user/list',
+                    method: 'POST',
+                    data: data,
+                    success: function (response) {
+                        if (response.message) {
+                            $('#userListTableBody').empty();
+                            console.error(response.message);
+                        } else {
+                            populateTable(response.content);
+                            populatePagination(response.pageNumber, response.totalPages);
+                            populateTotalRecords("Total Users: " + response.totalRecords);
+                        }
+                    },
+                    error: function (error) {
+                        $('#userListTableBody').empty();
+                        console.error('Error fetching data:', error);
+                    }
+                });
+            }
+
+            fetchData(null, $('#pageSize').val());
+
+            $('#id, #username, #fullname, #mailAddress').on('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    fetchData(null, $('#pageSize').val());
+                }
+            });
+
+            $('#pageSize').on('change', function (e) {
+                e.preventDefault();
+                fetchData(null, $(this).val());
+            });
+
+            $('#sortBy').on('change', function (e) {
+                e.preventDefault();
+                fetchData($("#activePageNumber").data('page'), $(pageSize).val());
+            });
+
+            $('#pagination').on('click', 'a', function (e) {
+                e.preventDefault();
+                fetchData($(this).data('page'), $('#pageSize').val());
+            });
+        });
+
+
+        function populateTable(data) {
+            var tableBody = $('#userListTableBody');
+            tableBody.empty()
+
+            $.each(data, function (index, user) {
+                var row = '<tr>' +
+                    '<td>' + user.id + '</td>' +
+                    '<td><a style="color:#333;" href="/user/profile/' + user.id + '"><u>' + user.username + '</u></a></td>' +
+                    // '<td>' + user.username + '</td>' +
+                    '<td>' + user.mailAddress + '</td>' +
+                    // '<td><a target="_blank" style="color:#454545;" href="/client/edit/' + user.id + '"><u>' + user.name + '</u></a></td>' +
+                    '<td>' + user.fullname + '</td>' +
+                    '<td>' + user.clientDisplayNameList + '</td>' +
+                    '<td>' + user.serviceDisplayNameList + '</td>' +
+                    '</tr>';
+                tableBody.append(row);
+            });
+        }
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <div th:insert="~{static/js/table.html :: js}"></div>
+
+</body>
+
+</html>

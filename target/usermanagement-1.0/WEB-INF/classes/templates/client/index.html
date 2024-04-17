@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCommit Repositories</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table th {
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>CodeCommit</h1>
+        <div>
+        </div>
+    </header>
+    <div class="content">
+        <h2>Repositories</h2>
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Last modified</th>
+                        <th>Clone URL</th>
+                        <th>AWS KMS Key</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Approval rule templates</td>
+                        <td></td>
+                        <td>Just now</td>
+                        <td>
+                            <a href="#">HTTPS SSH</a>
+                            <br>
+                            <a href="#">alias/aws/codecommit</a>
+                            <br>
+                            <a href="#">HTTPS (GRC)</a>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>pa-front-end</td>
+                        <td>For PA Front</td>
+                        <td>Just now</td>
+                        <td>
+                            <a href="#">HTTPS SSH</a>
+                            <br>
+                            <a href="#">alias/aws/codecommit</a>
+                            <br>
+                            <a href="#">HTTPS (GRC)</a>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

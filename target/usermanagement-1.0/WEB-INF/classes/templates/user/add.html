@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User</title>
+    
+    <div th:insert="~{static/css/sidebar.html :: css}"></div>
+    <div th:insert="~{static/css/bootstrap.min.html :: css}"></div>
+    
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 20px 0px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Include sidebar -->
+    <div th:insert="~{user/sidebar.html :: userSidebar}"></div>
+
+    <div class="mainContent">
+        <h1 class="mt-4">Add User</h1>
+
+        <div class="container form-container">
+
+            <!-- User Add Form -->
+            <form id="addUserForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName">
+                            <span id="firstNameError" class="error-message"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="middleName">Middle Name</label>
+                            <input type="text" class="form-control" id="middleName" name="middleName">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" name="lastName">
+                    <span id="lastNameError" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username">
+                    <span id="usernameError" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label for="mailAddress">Mail Address</label>
+                    <input type="email" class="form-control" id="mailAddress" name="mailAddress">
+                    <span id="mailAddressError" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label for="client">Client</label>
+                    <select multiple class="custom-select" id="client" name="client">
+                        <option selected>Choose...</option>
+                        <option value="client1">Client 1</option>
+                        <option value="client2">Client 2</option>
+                        <option value="client3">Client 3</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                    <span id="clientError" class="error-message"></span>
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="onSubmitButtonClicked(event)">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        function isFormValid() {
+            var errorMessages = document.getElementsByClassName("error-message");
+            for (var i = 0; i < errorMessages.length; i++) {
+                errorMessages[i].innerText = '';
+            }
+
+            var isValid = true;
+            var firstName = document.getElementById('firstName').value;
+            if (firstName.trim() === '') {
+                document.getElementById('firstNameError').innerText = 'First Name is mandatory';
+                isValid = false;
+            }
+
+            var lastName = document.getElementById('lastName').value;
+            if (lastName.trim() === '') {
+                document.getElementById('lastNameError').innerText = 'Last Name is mandatory';
+                isValid = false;
+            }
+
+            var mailAddress = document.getElementById('mailAddress').value;
+            if (mailAddress.trim() === '') {
+                document.getElementById('mailAddressError').innerText = 'Mail Address is mandatory';
+                isValid = false;
+            }
+
+            var username = document.getElementById('username').value;
+            if (username.trim() === '') {
+                document.getElementById('usernameError').innerText = 'Username is mandatory';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+
+        function onSubmitButtonClicked(e) {
+            e.preventDefault();
+            if (isFormValid()) {
+                addUser();
+            }
+        }
+
+        function addUser() {
+            const data = {
+                firstName: $('#firstName').val(),
+                middleName: $('#middleName').val(),
+                lastName: $('#lastName').val(),
+                username: $('#username').val(),
+                mailAddress: $('#mailAddress').val(),
+                employerId: 1,
+            }
+
+            console.log("data" + data);
+
+            $.ajax({
+                url: '/api/user/add',
+                method: 'POST',
+                data: data,
+                success: function (response) {
+                    console.log("response" + response);
+
+                    if (response.userId) {
+                        window.location.href = "/user/profile/" + response.userId;
+                    } else {
+                        alert(response.errorMessage);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert("Something went wrong. Please try again");
+                }
+            });
+        }
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<div th:fragment="css">
+    <style>
+        .horizontal-line {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .horizontal-line .navigation {
+            margin-right: 7px;
+        }
+
+        .mainContent {
+            padding-top: 20px;
+            margin-left: 290px;
+            padding-left: 25px;
+            padding-right: 30px;
+            transition: margin-left 0.3s ease;
+            box-shadow: 5px 0 5px -5px rgba(0, 0, 0, 0.5);
+            background-color: white;
+        }
+
+        
+        .primary-round-btn {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            height: 42px;
+            background-color: #003772;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .primary-round-btn:hover {
+            background-color: #003c7b;
+            color: rgb(185, 185, 185);
+        }
+
+    </style>
+</div>
